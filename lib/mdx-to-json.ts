@@ -14,7 +14,12 @@ export function mdxToJson(mdx: string) {
     const processor = createProcessor({
         format: 'mdx',
         remarkPlugins: [() => (t) => (mdast = t), remarkFrontmatter],
-        rehypePlugins: [() => (t) => (hast = t)],
+        rehypePlugins: [
+            () => (t) => {
+                hast = JSON.parse(JSON.stringify(t));
+                console.log(JSON.stringify(t));
+            },
+        ],
     });
 
     const ast = processor.parse({ value: mdx });

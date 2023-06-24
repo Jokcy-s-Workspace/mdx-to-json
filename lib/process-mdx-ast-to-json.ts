@@ -50,6 +50,7 @@ function getJSXName(
 function turnEstreeJsxElementToJson(
     element: ExpressionMap['JSXElement'],
 ): JsonNode {
+    console.log(element.children);
     return {
         component: getJSXName(element.openingElement.name),
         props: element.openingElement.attributes.reduce((result, attr) => {
@@ -62,6 +63,34 @@ function turnEstreeJsxElementToJson(
                 [attr.name.name as string]: processJSXAttribute(attr),
             };
         }, {} as Record<string, any>),
+        children: element.children.map((child) => {
+            if (child.type === 'JSXElement') {
+                return turnEstreeJsxElementToJson(child);
+            } else if ((child.type as any) === 'mdxJsxFlowElement') {
+                // TODO: do this as indevalduade function
+
+                const c = child as unknown as MdxJsxFlowElement;
+
+                const jsonNode: JsonNode = {
+                    component: c.name,
+                    props: c.attributes.reduce(
+                        (result, attr) => ({
+                            ...result,
+                            [attr.name]: processJSXProp(attr),
+                        }),
+                        {},
+                    ),
+                    children: [],
+                };
+
+                loopChildren(c.children, jsonNode.children!);
+
+                // jsonChildren.push(jsonNode);
+                return jsonNode;
+            } else {
+                throw new Error(`${child.type} not supported`);
+            }
+        }),
     };
 }
 
@@ -110,11 +139,11 @@ type JsxAttribute = {
           };
 };
 
-type JSXElement = {
+type MdxJsxFlowElement = {
     type: 'mdxJsxFlowElement';
     name: string;
     attributes: JsxAttribute[];
-    children: (ElementContent | JSXElement)[];
+    children: (ElementContent | MdxJsxFlowElement)[];
 };
 
 export type TextJsonNode = {
@@ -127,7 +156,7 @@ export type JsonNode = {
     children?: (JsonNode | TextJsonNode)[];
 };
 
-function loopChildren<T extends RootContent | JSXElement>(
+function loopChildren<T extends RootContent | MdxJsxFlowElement>(
     children: T[],
     jsonChildren: (JsonNode | TextJsonNode)[],
 ) {
