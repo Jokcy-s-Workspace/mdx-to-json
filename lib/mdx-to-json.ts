@@ -16,8 +16,7 @@ export function mdxToJson(mdx: string) {
         remarkPlugins: [() => (t) => (mdast = t), remarkFrontmatter],
         rehypePlugins: [
             () => (t) => {
-                hast = JSON.parse(JSON.stringify(t));
-                console.log(JSON.stringify(t));
+                hast = structuredClone(t);
             },
         ],
     });
