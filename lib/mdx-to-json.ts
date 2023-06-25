@@ -29,5 +29,8 @@ export function mdxToJson(mdx: string) {
         frontmatter = parse(node.value);
     });
 
-    return processMdxAstToJson(hast);
+    return {
+        frontmatter,
+        nodes: processMdxAstToJson(hast),
+    };
 }

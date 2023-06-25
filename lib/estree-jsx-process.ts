@@ -1,17 +1,20 @@
 import { Root, Element, ElementContent, RootContent } from 'hast';
 import { Program, ExpressionMap } from 'estree';
 import { toJs } from 'estree-util-to-js';
+
+import { JsonNode, MdxJsxFlowElement } from './types';
 import {
     JSXAttribute,
     JSXIdentifier,
     JSXMemberExpression,
     JSXNamespacedName,
-} from 'estree-util-to-js/lib/jsx';
-import { JsonNode, MdxJsxFlowElement } from './types';
-import {
+    JSXFragment,
     Expression,
     JSXEmptyExpression,
     JSXExpressionContainer,
+    JSXElement,
+    JSXText,
+    JSXSpreadChild,
 } from 'estree-jsx';
 
 function getJSXName(
@@ -26,7 +29,7 @@ function getJSXName(
     }
 }
 
-function getExpressionValue(program: Program) {
+export function getExpressionValue(program: Program) {
     return eval(toJs(program).value);
 }
 
@@ -69,6 +72,29 @@ function processJSXAttribute(attr: JSXAttribute) {
     return value;
 }
 
+export function processJSXChild(
+    child:
+        | JSXFragment
+        | JSXElement
+        | JSXExpressionContainer
+        | JSXText
+        | JSXSpreadChild,
+) {
+    if (child.type === 'JSXElement') {
+        return turnEstreeJsxElementToJson(child);
+    }
+    if (child.type === 'JSXExpressionContainer') {
+        return getJSXExpressionContainerValue(child.expression);
+    }
+    if (child.type === 'JSXText') {
+        return child.value;
+    }
+    if (child.type === 'JSXFragment') {
+    }
+
+    throw new Error(`${child.type} not supported`);
+}
+
 export function turnEstreeJsxElementToJson(
     element: ExpressionMap['JSXElement'],
 ): JsonNode {
@@ -86,18 +112,6 @@ export function turnEstreeJsxElementToJson(
                 [attr.name.name as string]: value,
             };
         }, {} as Record<string, any>),
-        children: element.children.map((child) => {
-            if (child.type === 'JSXElement') {
-                return turnEstreeJsxElementToJson(child);
-            }
-            if (child.type === 'JSXExpressionContainer') {
-                return getJSXExpressionContainerValue(child.expression);
-            }
-            if (child.type === 'JSXText') {
-                return child.value;
-            }
-
-            throw new Error(`${child.type} not supported`);
-        }),
+        children: element.children.map((child) => processJSXChild(child)),
     };
 }

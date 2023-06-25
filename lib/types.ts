@@ -1,18 +1,12 @@
-import { Root, Element, ElementContent, RootContent } from 'hast';
-import { Program, ExpressionMap } from 'estree';
-import { toJs } from 'estree-util-to-js';
-import {
-    JSXAttribute,
-    JSXIdentifier,
-    JSXMemberExpression,
-    JSXNamespacedName,
-} from 'estree-util-to-js/lib/jsx';
+import { ElementContent } from 'hast';
+import { Program } from 'estree-jsx';
 
-export type JsxAttribute = {
+export type MdxJsxAttribute = {
     type: 'mdxJsxAttribute';
     name: string;
     value:
         | string
+        | null
         | {
               type: 'mdxJsxAttributeValueExpression';
               value: string;
@@ -23,7 +17,7 @@ export type JsxAttribute = {
 export type MdxJsxFlowElement = {
     type: 'mdxJsxFlowElement';
     name: string;
-    attributes: JsxAttribute[];
+    attributes: MdxJsxAttribute[];
     children: (ElementContent | MdxJsxFlowElement)[];
 };
 
