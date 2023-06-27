@@ -1,6 +1,6 @@
 {
     "name": "mdx-to-json",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "description": "turn mdx to json model",
     "main": "./dist/index.js",
     "author": "Jokcy Lou",
@@ -9,6 +9,10 @@
     "bin": {
         "mtj": "./bin/index.mjs"
     },
+    "files": [
+        "dist",
+        "bin"
+    ],
     "publishConfig": {
         "registry": "https://registry.npmjs.com"
     },
