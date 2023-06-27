@@ -1,4 +1,4 @@
-import { JsonNode, TextJsonNode } from './process-mdx-ast-to-json';
+import { JsonNode, TextJsonNode } from './types.js';
 
 export function build(
     component: string,

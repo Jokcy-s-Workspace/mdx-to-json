@@ -1,1 +1,1 @@
-export * from './useMDXJson';
+export * from './useMDXJson.js';

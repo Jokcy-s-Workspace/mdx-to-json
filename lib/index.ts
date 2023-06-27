@@ -1,1 +1,1 @@
-export * from './mdx-to-json';
+export * from './mdx-to-json.js';

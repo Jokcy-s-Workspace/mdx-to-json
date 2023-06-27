@@ -11,7 +11,7 @@ import {
     getExpressionValue,
     processJSXChild,
     turnEstreeJsxElementToJson,
-} from './estree-jsx-process';
+} from './estree-jsx-process.js';
 import { JSXFragment } from 'estree-jsx';
 
 function processMdxJsxProp(attr: MdxJsxAttribute) {

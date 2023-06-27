@@ -2,16 +2,20 @@
     "name": "mdx-to-json",
     "version": "0.0.1",
     "description": "turn mdx to json model",
-    "main": "index.js",
+    "main": "./dist/index.js",
     "author": "Jokcy Lou",
     "license": "MIT",
     "type": "module",
     "bin": {
         "mtj": "./bin/index.mjs"
     },
+    "publishConfig": {
+        "registry": "https://registry.npmjs.com"
+    },
     "scripts": {
         "test": "vitest",
-        "build": "tsc"
+        "build": "tsc",
+        "prepublishOnly ": "npm run build"
     },
     "dependencies": {
         "@mdx-js/mdx": "^2.3.0",

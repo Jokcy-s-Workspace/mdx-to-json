@@ -4,17 +4,29 @@ import { createProcessor } from '@mdx-js/mdx';
 import remarkFrontmatter from 'remark-frontmatter';
 import { visit } from 'unist-util-visit';
 import { parse } from 'yaml';
-import { processMdxAstToJson } from './process-mdx-ast-to-json';
+import { ProcessorOptions } from '@mdx-js/mdx';
+import { processMdxAstToJson } from './process-mdx-ast-to-json.js';
 
-export function mdxToJson(mdx: string) {
+export function mdxToJson(
+    mdx: string,
+    options: {
+        remarkPlugins?: ProcessorOptions['remarkPlugins'];
+        rehypePlugins?: ProcessorOptions['rehypePlugins'];
+    } = {},
+) {
     let mdast: Root = { type: 'root', children: [] };
     let hast: HastRoot = { type: 'root', children: [] };
     let frontmatter: Record<string, any> = {};
 
     const processor = createProcessor({
         format: 'mdx',
-        remarkPlugins: [() => (t) => (mdast = t), remarkFrontmatter],
+        remarkPlugins: [
+            ...(options.remarkPlugins || []),
+            remarkFrontmatter,
+            () => (t) => (mdast = t),
+        ],
         rehypePlugins: [
+            ...(options.rehypePlugins || []),
             () => (t) => {
                 hast = structuredClone(t);
             },

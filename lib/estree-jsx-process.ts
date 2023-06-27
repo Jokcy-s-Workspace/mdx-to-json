@@ -1,8 +1,7 @@
-import { Root, Element, ElementContent, RootContent } from 'hast';
 import { Program, ExpressionMap } from 'estree';
 import { toJs } from 'estree-util-to-js';
 
-import { JsonNode, MdxJsxFlowElement } from './types';
+import { JsonNode } from './types';
 import {
     JSXAttribute,
     JSXIdentifier,

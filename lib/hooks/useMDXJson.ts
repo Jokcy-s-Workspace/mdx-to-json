@@ -27,10 +27,21 @@ function isText(node: JsonNode | TextJsonNode): node is TextJsonNode {
     return !(node as any).component && (node as any).text;
 }
 
+function getChildren(
+    nodes: (JsonNode | TextJsonNode)[],
+    components: Record<string, ComponentType<any>>,
+) {
+    const result = nodes.map((node) =>
+        isText(node) ? node.text : renderNode(node, components),
+    );
+
+    return result.length === 1 ? result[0] : result;
+}
+
 function renderNode(
     node: JsonNode,
     components: Record<string, ComponentType<any>>,
-) {
+): JSX.Element {
     const Comp = components[node.component];
 
     if (!Comp) throw new Error(`${node.component} not found`);
@@ -38,9 +49,7 @@ function renderNode(
     return createElement(
         Comp,
         node.props,
-        node.children?.map((node) =>
-            isText(node) ? node.text : renderNode(node, components),
-        ),
+        node.children ? getChildren(node.children, components) : null,
     );
 }
 
@@ -52,7 +61,5 @@ export function useMdxJson(
 
     nodes = Array.isArray(nodes) ? nodes : [nodes];
 
-    return nodes.map((node) =>
-        isText(node) ? node.text : renderNode(node, mergeredComponents),
-    );
+    return getChildren(nodes, mergeredComponents);
 }
