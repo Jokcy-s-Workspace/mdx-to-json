@@ -1,6 +1,6 @@
 {
     "name": "mdx-to-json",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "turn mdx to json model",
     "main": "./dist/index.js",
     "author": "Jokcy Lou",
