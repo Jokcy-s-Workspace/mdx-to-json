@@ -31,8 +31,8 @@ function getChildren(
     nodes: (JsonNode | TextJsonNode)[],
     components: Record<string, ComponentType<any>>,
 ) {
-    const result = nodes.map((node) =>
-        isText(node) ? node.text : renderNode(node, components),
+    const result = nodes.map((node, index) =>
+        isText(node) ? node.text : renderNode(node, components, index),
     );
 
     return result.length === 1 ? result[0] : result;
@@ -41,6 +41,7 @@ function getChildren(
 function renderNode(
     node: JsonNode,
     components: Record<string, ComponentType<any>>,
+    key?: number | string,
 ): JSX.Element {
     const Comp = components[node.component];
 
@@ -48,7 +49,7 @@ function renderNode(
 
     return createElement(
         Comp,
-        node.props,
+        key !== undefined ? { ...node.props, key } : node.props,
         node.children ? getChildren(node.children, components) : null,
     );
 }
